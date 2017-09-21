@@ -51,7 +51,7 @@
             <td>String</td>
             <td>是</td>
 	    <td>
-	    	sdkUserID
+	    	客户端SDK返回的sdkUserID
 	    </td>
         </tr>
         <tr>

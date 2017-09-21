@@ -51,11 +51,7 @@
             <td>String</td>
             <td>是</td>
 	    <td>
-	    	客户端SDK返回的userId</br>
-	    	(
-		IOS：使用参数名为 userID 的值</br>
-		Android：使用参数名为 sdkUserID 的值
-		)
+	    	sdkUserID
 	    </td>
         </tr>
         <tr>

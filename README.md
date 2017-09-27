@@ -115,7 +115,7 @@ sign = MD5(appID + token + appKey)
                 Stirng
             </td>
             <td>
-                用户ID
+                用户ID(用户唯一标识)
             </td>
         </tr>
         <tr>

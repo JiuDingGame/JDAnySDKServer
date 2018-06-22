@@ -136,17 +136,26 @@ sign = MD5(appID + token + appKey)
         </tr>
     </tbody>
 </table>
-####返回值示例</br>
-//JSON:</br>
-{    </br>
-    "errorCode": 0,</br>
-    "data":</br>
-    {</br>
-        "id": "3625533"</br>
-        "account": "jiuding_3001_1856313"，</br>
-    }</br>
-}</br>
-</br></br>
+
+####校验成功返回值示例：</br>
+```
+{
+  "errorCode": 0,
+  "data": {
+    "id": "5400013",
+    "account": "jiuding_88_270095"
+  }
+}
+```
+
+####验证失败返回值示例：</br>
+```
+{
+  "errorCode": 4,
+  "data":""
+}
+```
+
 ##发货通知接口</br>
 ####接口地址
 <table>
@@ -242,25 +251,96 @@ sign = MD5(appID + token + appKey)
             <td>CP扩展信息，客户端SDK传入，原样返回</td>
         </tr>
         <tr>
+            <td>appId</td>
+            <td>Int</td>
+            <td>是</td>
+            <td>游戏ID</td>
+        </tr>
+        <tr>
+            <td>logicChannelId</td>
+            <td>Int</td>
+            <td>是</td>
+            <td>默认为0</td>
+        </tr>
+        <tr>
+            <td>sdkUserID</td>
+            <td>Int</td>
+            <td>是</td>
+            <td>渠道账号ID</td>
+        </tr>
+        <tr>
             <td>sign</td>
             <td>String</td>
             <td>是</td>
             <td>签名(签名方式如下)</td>
         </tr>
+        <tr>
+            <td>flag</td>
+            <td>Int</td>
+            <td>否</td>
+            <td>签名方式标识</td>
+        </tr>
     </tbody>
 </table>
-####签名方式</br>
+
+####签名方式（二选一）</br>
+#####1、<font color=#FF0000>当不存在flag参数时：</font><br/>
 sign = MD5(productID + roleId + orderNum + endTime + appKey)
-</br></br>
-####返回值示例
 </br>
+#####2、<font color=#FF0000>当存在flag参数时：</font><br/>
+将所有参数（除了sign）按键名进行排序（ a-z），排序之后按key=value用‘&’字符拼接，最后拼接appKey:<br/>
+
+```
+ksort($param);
+$str = http_build_query($param);
+$str .= $appKey;
+$sign = md5(urldecode($str));
+```
+签名样例：<br/>
+
+```
+参数：$param = array (
+		  'productID' => '1',
+		  'productName' => '钻石',
+		  'orderNum' => '2018051519122967685340695525',
+		  'roleId' => '695666',
+		  'serverID' => '1',
+		  'channelID' => '88',
+		  'logicChannelId' => 0,
+		  'userID' => '695666',
+		  'sdkUserID' => '516',
+		  'addTime' => '2018-05-15 19:11:19',
+		  'endTime' => '2018-05-15 19:12:22',
+		  'money' => '10',
+		  'appId' => '50',
+		  'extension' => '370b3b1a',
+		  'flag'=>2,
+		);
+```
+appKey: 123456<br/>
+
+代签数据：<br/>
+
+```
+addTime=2018-05-15 19:11:19&appId=50&channelID=88&endTime=2018-05-15 19:12:22&extension=370b3b1a&flag=2&logicChannelId=0&money=10&orderNum=2018051519122967685340695525&productID=1&productName=钻石&roleId=695666&sdkUserID=516&serverID=1&userID=695666123456
+```
+最后得出sign：<br/>
+
+```
+sign = 6bd65f3ad60c59645839d23628231965
+```
+
+####返回值示例
 请求成功返回字符串: SUCCESS
 </br>
 请求错误返回字符串: FAIL
-</br></br>
-####说明</br>
-各个渠道对充值回调有不同的处理，只有CP返回SUCCESS时，渠道方才认为充值回调成功。若未收到CP的成功回复，渠道方可能会尝试继续发送回调请求，CP方要自行判断重复请求。
-</br></br>
+</br>
+
+##注意</br>
+1、充值回调使用了重复通知机制，只有CP返回SUCCESS时，渠道方才认为充值回调成功。若未收到CP的成功回复，渠道方可能会尝试继续发送回调请求，CP方要自行判断重复请求。</br>
+
+2、CP收到充值回调时需对充值档位和金额进行校验。</br>
+
 ##附录
 <table>
     <thead>
